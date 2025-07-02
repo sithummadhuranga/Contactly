@@ -26,8 +26,32 @@ export class App {
   contacts$ = this.getContacts();
 
   onFormSubmit(){
-    console.log(this.contactsForm.value);
-    
+    const addContactRequest = {
+      name: this.contactsForm.value.name,
+      email: this.contactsForm.value.email,
+      phone: this.contactsForm.value.phone,
+      favourite: this.contactsForm.value.favorite
+    }
+
+    this.http.post('https://localhost:7267/api/Contacts', addContactRequest)
+    .subscribe({
+      next: (value) => {
+        console.log(value);
+        this.contacts$ = this.getContacts();
+        this.contactsForm.reset();
+      }
+    });
+
+  }
+
+  onDelete(id: string){
+    this.http.delete(`https://localhost:7267/api/Contacts/${id}`)
+    .subscribe({
+      next: (value) => {
+        alert('Contact deleted successfully');
+        this.contacts$ = this.getContacts();
+      }
+    });
   }
 
   private getContacts(): Observable<Contact[]> {
